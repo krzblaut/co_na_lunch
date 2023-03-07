@@ -2,6 +2,8 @@ from doki import DokiMenu
 from otwarte import OtwarteMenu
 from drukarnia import DrukarniaMenu
 from noz import NozMenu
+from shamo import ShamoMenu
+
 
 class CreateHTML:
 
@@ -37,6 +39,9 @@ class CreateHTML:
         noz = NozMenu()
         noz_lunch = noz.get_todays_menu()
         menu_table.append(['NÕŻ', noz_lunch])
+        shamo = ShamoMenu()
+        shamo_lunch = shamo.get_todays_menu()
+        menu_table.append(['Shamo', shamo_lunch])
         return menu_table
     
     
@@ -52,5 +57,5 @@ class CreateHTML:
         return html_output
         
 
-html = CreateHTML()
-html.generate()
+# html = CreateHTML()
+# html.generate()

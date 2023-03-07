@@ -1,6 +1,8 @@
 import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from PIL import Image
 import pytesseract
@@ -29,7 +31,10 @@ class DokiMenu:
         self.login()
         self.take_screenshots()
         stories = self.get_lunch_stories()
-        menu = self.clean_text(stories[-1])
+        if stories == 'brak danych':
+            menu = stories
+        else:
+            menu = self.clean_text(stories[-1])
         self.remove_temp_files()
         return menu
     
@@ -40,10 +45,12 @@ class DokiMenu:
         self.driver.find_element(By.ID, 'email').send_keys(self.username)
         self.driver.find_element(By.ID, 'pass').send_keys(self.password)
         self.driver.find_elements(By.NAME, 'login')[0].click()
+        time.sleep(1)
 
 
     def take_screenshots(self):
         self.driver.get(self.stories)
+        time.sleep(2)
         self.driver.find_elements(By.XPATH, "//*[contains(text(), 'DOKI gastrobar')]")[1].click()
         i=0
         while True: 
@@ -57,10 +64,10 @@ class DokiMenu:
 
 
     def text_from_image(self, image_path):
-        left = 1200
-        top = 90
-        right = 1730
-        bottom = 1000
+        left = 1300
+        top = 120
+        right = 1680
+        bottom = 800
         img = Image.open(image_path)
         cropped_image = img.crop((left, top, right, bottom))
         text = pytesseract.image_to_string(cropped_image, lang="pol")
@@ -73,16 +80,19 @@ class DokiMenu:
             try:
                 path = f'doki_screenshots/image{i}.png'
                 text = self.text_from_image(path)
-                if 'lunch' in text and 'DOKI' in text:
+                if 'lunch' in text and '12-17' in text:
                     lunch_stories.append([path, text])
             except FileNotFoundError:
                 break
-        return lunch_stories[-1]
+        if len(lunch_stories) == 0:
+            return 'brak danych'
+        else:
+            return lunch_stories[-1]
     
 
     def clean_text(self, text):
         text = text.split('\n\n')
-        text = text[3] + ' + ' + text[4]
+        text = text[1] + ' ; ' + text[-2]
         text = text.replace('\n', ' ')
         return text    
     
@@ -96,12 +106,4 @@ class DokiMenu:
         else:
             pass
 
-    
-# doki = DokiMenu()
-# doki.login()
-# doki.take_screenshots()
-# stories = doki.get_lunch_stories()
-# text = doki.text_from_image('doki_2_opcje.png')
-# print(text)
-# print(doki.clean_text(text))
 

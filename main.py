@@ -1,17 +1,19 @@
-
-from make_html import CreateHTML
-
-if __name__ == 'main':
+from drukarnia import DrukarniaMenu
+from send_email import MailSender
 
 
-    places = ['Doki', 'Drukarnia', 'Nóż', 'Otwarte drzwi']
-    lunch_table = []
+import datetime
+
+if __name__ == '__main__':
     
+    now = datetime.datetime.now()
 
-    doki = DokiMenu()
-    doki_menu = doki.get_todays_menu()
-
-
-    lunch_table.append(['Doki', doki_menu])
-
+    if now.hour < 10:
+        druk = DrukarniaMenu()
+        druk.login()
+        druk.send_message()
+    else:
+        sender = MailSender()
+        sender.send_email()
+        
 

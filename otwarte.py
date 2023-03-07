@@ -85,5 +85,8 @@ class OtwarteMenu:
         days_menu_list = self.get_each_day_menu(text)
         weekday = datetime.datetime.now().weekday()
         todays_menu = days_menu_list[weekday].replace('\n\n', '\n').replace('\n', '; ')
+        todays_menu = todays_menu.replace('; ', '', 1)
         return todays_menu
+    
+
 
